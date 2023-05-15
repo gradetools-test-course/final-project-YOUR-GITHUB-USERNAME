@@ -1,0 +1,78 @@
+---
+title: "Final project presentation"
+author: "Student 1"
+date: "June 1, 2023"
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    lib_dir: libs
+    nature:
+      ratio: "16:9"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r load-packages, include = FALSE}
+# Add any additional packages you need to this chunk
+# Remove any packages from this list that you're not using
+library(dplyr)
+library(forcats)
+library(broom)
+library(ggplot2)
+library(palmerpenguins)
+library(knitr)
+```
+
+```{r setup, include=FALSE}
+# For better figure resolution
+knitr::opts_chunk$set(
+  fig.retina = 3, 
+  dpi = 300, 
+  fig.width = 6, 
+  fig.asp = 0.618, 
+  out.width = "70%"
+  )
+```
+
+class: middle, center
+
+## Palmer penguins data
+
+```{r penguins-table, echo = FALSE}
+kable(head(penguins), format = "html")
+```
+
+---
+
+
+## Plot
+
+```{r recode-species, echo = FALSE}
+# In this chunk I'm doing a bunch of analysis that I don't want to present 
+# in my slides. But I need the resulting data frame for a plot I want to present.
+penguins_modified <- penguins %>%
+  mutate(species = fct_other(species, keep = "Adelie"))
+```
+
+```{r plot-penguins, echo = FALSE, warning = FALSE, fig.alt = "Body mass vs. flipper lenght of Palmer Penguins for species Adelie and all the others combined together. There is a relatively strong, positive relationship between the two variables. The Adelie penguins are clustered together but they don't exhibit a different trend than the rest of the penguins."}
+# Code hidden with echo = FALSE
+# Uses modified penguins dataset from previous chunk
+# Play around with height and width until you're happy with the look
+ggplot(penguins_modified, aes(x = flipper_length_mm, y = body_mass_g, color = species)) +
+  geom_point() + 
+  theme_minimal()
+```
+
+---
+
+## Model
+
+A simple linear regression:
+
+```{r boring-regression}
+lm(body_mass_g ~ flipper_length_mm, data = penguins_modified) %>% 
+  tidy() 
+```
+
+
